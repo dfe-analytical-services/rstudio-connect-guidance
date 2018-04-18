@@ -1,0 +1,13 @@
+--- 
+title: "RStudio Connect Guidance"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+---
+
+```{r setup, echo = FALSE}
+```
+
+# Preface {-}
