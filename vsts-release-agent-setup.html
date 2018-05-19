@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
+<link rel="prev" href="introduction.html">
 
-<link rel="next" href="introduction.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -164,20 +164,153 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">RStudio Connect Guidance</h1>
+<div id="vsts-release-agent-setup" class="section level1">
+<h1><span class="header-section-number">A</span> VSTS Release Agent Setup</h1>
+<div id="background" class="section level2">
+<h2><span class="header-section-number">A.1</span> Background</h2>
+<p>This chapter outlines how to set up the Data Science RD Farm (or any other machine) as an agent on Visual Studio Team Services (VSTS).</p>
+<p>This will allow for continuous deployment pipelines to be set-up using VSTS Build and Release functionality and negates the need for manual copying or cloning of repositories to the RD farm to deploy.</p>
 </div>
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
+<div id="process" class="section level2">
+<h2><span class="header-section-number">A.2</span> Process</h2>
+<ol style="list-style-type: decimal">
+<li>Add R to the PATH of the DS RD Farm</li>
+<li>Create a new Agent Pool</li>
+<li>Download the Agent</li>
+<li>Move the Agent files to the DS RD Farm</li>
+<li>Create a new Personal Access Token</li>
+<li>Configure the Agent on the RD Farm</li>
+<li>Run the Agent</li>
+</ol>
+<div id="add-r-to-the-path-of-the-rd-farm" class="section level3">
+<h3><span class="header-section-number">A.2.1</span> Add R to the Path of the RD Farm</h3>
+<ul>
+<li>Log onto the Data Science RD Farm</li>
+<li>Add R to your path variable:</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="ex">setx</span> PATH <span class="st">&#39;/c/Program Files/R/R-3.4.2/bin&#39;</span></a></code></pre></div>
+</div>
+<div id="create-a-new-agent-pool" class="section level3">
+<h3><span class="header-section-number">A.2.2</span> Create a New Agent Pool</h3>
+<ul>
+<li>On your VSTS Project, select ‘Agent Queues’ from the menu under the cog icon</li>
+</ul>
+<p><img src="www/agent-quest-button.png" /></p>
+<ul>
+<li>On the Agent Queues page, click ‘New queue…’</li>
+</ul>
+<p><img src="www/new-pools.png" /></p>
+<ul>
+<li>Give your Agent Pool a name (e.g. DS-RD-FARM)</li>
+</ul>
+<p><img src="www/create-queue.png" /></p>
+</div>
+<div id="download-the-agent" class="section level3">
+<h3><span class="header-section-number">A.2.3</span> Download the Agent</h3>
+<ul>
+<li>At the top of the page, click the ‘Download Agent’ button</li>
+</ul>
+<p><img src="www/download-agent.png" /></p>
+<ul>
+<li>On the next window, click ‘Download’</li>
+</ul>
+<p><img src="www/get-agent.png" /></p>
+<ul>
+<li>This will download a zip file</li>
+</ul>
+<p><img src="www/agent-zip.png" /></p>
+</div>
+<div id="move-the-agent-to-the-ds-rd-farm" class="section level3">
+<h3><span class="header-section-number">A.2.4</span> Move the Agent to the DS RD Farm</h3>
+<ul>
+<li><p>Cut and paste the entire zip folder to a suitable location on the DS RD Farm (Needs to be via a login that has publishing rights to the RSConnect Servers).</p></li>
+<li><p>Open the zip file and click ‘Extract All’</p></li>
+</ul>
+<p><img src="www/zip-rd-farm.png" /></p>
+<ul>
+<li>Provide a suitable folder name such as VSTS-RELEASE-AGENT or DS-RD-FARM-01</li>
+</ul>
+<p><img src="www/zip-extract.png" /></p>
+</div>
+<div id="create-a-new-personal-acceess-token" class="section level3">
+<h3><span class="header-section-number">A.2.5</span> Create a new Personal Acceess Token</h3>
+<ul>
+<li><p>Back on VSTS, go to the ‘Security’ page of your profile</p></li>
+<li><p>Click Add</p></li>
+</ul>
+<p><img src="www/personal-access-token.png" /></p>
+<ul>
+<li>Give it a name, and set it to expire in a long time (otherwise you’ll need to keep renewing and reconfiguring your agents).</li>
+</ul>
+<p><img src="www/create-pat.png" /></p>
+<ul>
+<li>Copy it to the clipboard! Note: you cannot only see the token at this point and not at a later date so safest to email it to your-self for now, so you’ve definitely got it!</li>
+</ul>
+</div>
+<div id="configure-the-agent" class="section level3">
+<h3><span class="header-section-number">A.2.6</span> Configure the agent</h3>
+<ul>
+<li>Open the agent folder you created on the RD farm and open the ‘config file’</li>
+</ul>
+<p><img src="www/config-agent-file.png" /></p>
+<ul>
+<li>This will open up a powershell terminal</li>
+</ul>
+<p><img src="www/initial-powershell-terminal.png" /></p>
+<ul>
+<li><p>Enter the URL of the VSTS Instance e.g. <a href="https://dfedata.visualstudio.com" class="uri">https://dfedata.visualstudio.com</a></p></li>
+<li><p>Press enter to use PAT authentication</p></li>
+</ul>
+<p><img src="www/powershell-server-url.png" /></p>
+<ul>
+<li>Paste your personal access token in, and press enter</li>
+</ul>
+<p><img src="www/powershell-pat.png" /></p>
+<ul>
+<li><p>Type in the name of your Agent Pool (created in step one)</p></li>
+<li><p>Give your agent a name - this could be anything, but makes sense to use the same name as the folder you put the files in (DS-RD-FARM-01 in this case).</p></li>
+</ul>
+<p><img src="www/powershell-vsts-naming.png" /></p>
+<ul>
+<li><p>Press enter to use the default setting of the ’_work’ folder</p></li>
+<li><p>Enter Y to run the agent as a service</p></li>
+<li><p>The PowerShell terminal will vanish and you’ve finished configuring</p></li>
+<li><p>Back on VSTS (Agent Pools tab), you should see the agent as offline</p></li>
+</ul>
+<p><img src="www/vsts-agent-offline.png" /></p>
+</div>
+<div id="run-the-agent" class="section level3">
+<h3><span class="header-section-number">A.2.7</span> Run the agent</h3>
+<ul>
+<li>On the RD Farm, open the ‘run’ script in the Agent folder; it will say it is listening for jobs</li>
+</ul>
+<p><img src="www/powershell-listen-for-jobs.png" /></p>
+<ul>
+<li>On VSTS, you should now see your Agent as online (need to refresh the browser).</li>
+</ul>
+<p><img src="www/vsts-agent-online.png" /></p>
+</div>
+</div>
+<div id="conclusions-and-next-steps" class="section level2">
+<h2><span class="header-section-number">A.3</span> Conclusions and Next Steps</h2>
+<p>You’ve now set up the DS RD Farm as a release agent, which means it can be used to perform automated actions, such as deploying shiny apps.</p>
+<p>To create an automated release pipeline using this agent, you’ll need to go to the Build and Release tab of VSTS and create a new release definition, walking through the steps there.</p>
+<p>For deploying shiny apps, you’ll need:</p>
+<ul>
+<li><p>An ‘Agent Phase’, where you tell the release to use the Agent Pool.</p></li>
+<li><p>A PowerShell task, where you tell the Agent what code to run.</p></li>
+</ul>
+<p>In this case, the agent will run a single line of R code, using the rsconnect::deployApp() function.</p>
 
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
+<a href="introduction.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 
-<a href="introduction.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
